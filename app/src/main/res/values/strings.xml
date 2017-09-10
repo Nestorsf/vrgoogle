@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Vr</string>
+    <string name="nativo">Nativo</string>
+    <string name="webview">Web view</string>
+    <string name="escribeurl">Escribe la url</string>
+    <string name="inicializar">Empezar</string>
+    <string name="urlvalida">Url no valida escriba una correcta</string>
 </resources>

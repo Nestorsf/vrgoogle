@@ -1,22 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.nestorso.vr.MainActivity">
-
-    <com.google.vr.sdk.widgets.video.VrVideoView
-        android:id="@+id/video_view"
-        android:layout_width="match_parent"
-        android:scrollbars="@null"
-        android:layout_height="250dip"/>
-
-    <android.support.v7.widget.AppCompatSeekBar
+    tools:context="com.example.nestorso.vr.MainActivity"
+    android:orientation="vertical"
+    >
+    <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/video_view"
-        android:id="@+id/seekbar"
+        android:id="@+id/txtUrl"
+        android:hint="@string/escribeurl"
+        android:inputType="textUri"
+        android:text="https://delight-vr.com/examples/elements/video/surf/get-barreled-in-tahiti-with-samsung-gear-vr_1080p.mp4"
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnNativo"
+        android:text="@string/nativo"
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnWebView"
+        android:text="@string/webview"
         />
 
-</RelativeLayout>
+
+</LinearLayout>

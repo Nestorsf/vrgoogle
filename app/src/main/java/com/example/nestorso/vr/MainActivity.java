@@ -1,121 +1,72 @@
 package com.example.nestorso.vr;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.webkit.URLUtil;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import com.example.nestorso.vr.nativo.NativoActivity;
+import com.example.nestorso.vr.webview.WebViewActivity;
 import com.google.vr.sdk.widgets.video.VrVideoEventListener;
 import com.google.vr.sdk.widgets.video.VrVideoView;
 
 import java.io.IOException;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private VrVideoView videoWidgetView;
-    private SeekBar seekBar;
-    private boolean isPaused = false;
+    public static final String EXTRA_URL="EXTRA_URL";
+
+    private Button btnNativo;
+    private Button btnWebView;
+    private EditText txtUrl;
+
+    //https://delight-vr.com/examples/elements/video/surf/get-barreled-in-tahiti-with-samsung-gear-vr_1080p.mp4
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        seekBar = (SeekBar) findViewById(R.id.seekbar);
-        setVrVideo();
+        btnNativo = (Button) findViewById(R.id.btnNativo);
+        btnWebView = (Button) findViewById(R.id.btnWebView);
+        txtUrl = (EditText) findViewById(R.id.txtUrl);
+        btnWebView.setOnClickListener(this);
+        btnNativo.setOnClickListener(this);
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        videoWidgetView.pauseRendering();
-        isPaused = true;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        videoWidgetView.resumeRendering();
-    }
-
-    @Override
-    protected void onDestroy() {
-        videoWidgetView.shutdown();
-        super.onDestroy();
-    }
-
-    private void setVrVideo(){
-        videoWidgetView = (VrVideoView) findViewById(R.id.video_view);
-        videoWidgetView.setEventListener(new VrVideoEventListener(){
-
-            @Override
-            public void onLoadSuccess() {
-                super.onLoadSuccess();
-                seekBar.setMax((int) videoWidgetView.getDuration());
-            }
-
-            @Override
-            public void onLoadError(String errorMessage) {
-                super.onLoadError(errorMessage);
-                Toast.makeText(MainActivity.this, "Error al cargar video", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onClick() {
-                super.onClick();
-                if(isPaused)
-                    videoWidgetView.playVideo();
-                else
-                    videoWidgetView.pauseVideo();
-                isPaused=!isPaused;
-
-            }
-
-
-            @Override
-            public void onCompletion() {
-                super.onCompletion();
-                videoWidgetView.seekTo(0);
-            }
-
-            @Override
-            public void onNewFrame() {
-                super.onNewFrame();
-                seekBar.setProgress((int) videoWidgetView.getCurrentPosition());
-            }
-        });
-        new ReproducirVideo().execute("");
-    }
-
-    private class ReproducirVideo extends AsyncTask<String, String, String>{
-
-
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+    public void onClick(View v) {
+        if (v == btnNativo && urlValida()) {
+            abrirNativo();
+        } else if (v == btnWebView && urlValida()) {
+            abriWebView();
         }
+    }
 
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-        }
+    private void abrirNativo() {
+        Intent i = new Intent(this, NativoActivity.class);
+        i.putExtra(EXTRA_URL, txtUrl.getText().toString());
+        startActivity(i);
+    }
 
-        @Override
-        protected String doInBackground(String... params) {
-            try {
-                VrVideoView.Options options = new VrVideoView.Options();
-                options.inputType = VrVideoView.Options.TYPE_MONO;
-                options.inputFormat = VrVideoView.Options.FORMAT_DEFAULT;
-                videoWidgetView.loadVideo(Uri.parse("http://video1.nytimes.com/video/360-demo/cool.mp4"), options);
-                //videoWidgetView.loadVideo(Uri.parse("http://techslides.com/demos/sample-videos/small.mp4"), options);
-                //videoWidgetView.loadVideo(Uri.parse("https://ia800201.us.archive.org/22/items/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4"), options);
-                videoWidgetView.playVideo();
-            }catch (IOException ex){
-                ex.printStackTrace();
-            }
-            return null;
-        }
+    private void abriWebView(){
+        Intent i = new Intent(this, WebViewActivity.class);
+        i.putExtra(EXTRA_URL, txtUrl.getText().toString());
+        startActivity(i);
+    }
+
+    private boolean urlValida() {
+        String url = txtUrl.getText().toString();
+        if (URLUtil.isValidUrl(url))
+            return true;
+        Toast.makeText(this, getString(R.string.urlvalida), Toast.LENGTH_SHORT).show();
+        return false;
     }
 }
